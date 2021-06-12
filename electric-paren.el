@@ -1,15 +1,21 @@
-;;; electric-paren --- Evaluate lisp forms in interactive modes when a closing parentheses is typed.  -*- lexical-binding: t; -*-
+;;; electric-paren.el --- Evaluate lisp expressions when they are complete   -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2020-2021 Robert Church
+;; 
 ;;; Commentary:
-;;; In ielm, eshell, slime repl, and inferior Lisp mode, this package
-;;; causes instant evaluation of complete expressions when a closing
-;;; parenthesis is typed.
-;;;
-;;; Author: Robert Church <chrchr@gmail.com>
-;;; Created: 2019-02-14
+;; In ielm, eshell, slime repl, and inferior Lisp mode, this package
+;; causes instant evaluation of complete expressions when a closing
+;; parenthesis is typed.
+;;
+;; Author: Robert Church <chrchr@gmail.com>
+;; Package-Version: 20210612
+;; Package-Requires: ((emacs "24.1"))
+;; Homepage: https://github.com/chrchr/electric-paren
+;; Created: 2019-02-14
+
 ;;; Code:
 
-(defun electric-close-paren-complete-sexp-p (min max)
+(defun electric-paren-complete-sexp-p (min max)
   "Determine whether the text between locations MIN and MAX represent a complete Lisp expression."
 
   (let ((state
@@ -22,14 +28,14 @@
   "Handle close paren keypresses for ielm.  ARG is a character to insert."
   (interactive "P")
   (self-insert-command (prefix-numeric-value arg))
-  (when (electric-close-paren-complete-sexp-p (ielm-pm) (point))
+  (when (electric-paren-complete-sexp-p (ielm-pm) (point))
     (ielm-send-input t)))
 
 (defun electric-paren-inferior-lisp-paren (arg)
   "Handle close paren keypresses for inferior-lisp-mode.  ARG is a character to insert."
   (interactive "P")
   (self-insert-command (prefix-numeric-value arg))
-  (when (electric-close-paren-complete-sexp-p
+  (when (electric-paren-complete-sexp-p
 	 (process-mark (get-buffer-process (current-buffer))) (point))
     (comint-send-input)))
 
@@ -37,19 +43,19 @@
   "Handle close paren keypresses for eshell.  ARG is a character to insert."
   (interactive "P")
   (self-insert-command (prefix-numeric-value arg))
-  (when (electric-close-paren-complete-sexp-p eshell-last-output-end (point))
+  (when (electric-paren-complete-sexp-p eshell-last-output-end (point))
     (eshell-send-input)))
 
 (defun electric-paren-eshell-set-keys ()
   "Configure the eshell keymap for electric-parens."
-  (define-key eshell-mode-map (kbd ")") 'electric-paren-eshell-paren))
+  (define-key eshell-mode-map (kbd ")") #'electric-paren-eshell-paren))
 
 (defun electric-paren-slime-repl-paren (arg)
   "Handle close paren keypresses for slime-repl.  ARG is a character to insert."
   (interactive "P")
   (self-insert-command (prefix-numeric-value arg))
   ;; slime has its own function to determine whether an expression is complete, so use that instead of
-  ;; electric-close-paren-complete-sexp-p.
+  ;; electric-paren-complete-sexp-p.
   (when (slime-input-complete-p slime-repl-input-start-mark (point-max))
     (slime-repl-send-input t)))
 
@@ -58,29 +64,32 @@
   (interactive "P")
   (self-insert-command (prefix-numeric-value arg))
   ;; sly has its own function to determine whether an expression is complete, so use that instead of
-  ;; electric-close-paren-complete-sexp-p.
+  ;; electric-paren-complete-sexp-p.
   (when (sly-input-complete-p (sly-mrepl--mark) (point-max))
     (sly-mrepl-return)))
 
+
+;;;##autoload
 (defun electric-paren-enable ()
   "Enable electric-paren in eshell, slime-repl, inferior-lisp-mode, and ielm."
-  (add-hook 'eshell-first-time-mode-hook 'electric-paren-eshell-set-keys)
+  (add-hook 'eshell-first-time-mode-hook #'electric-paren-eshell-set-keys)
   (add-hook 'slime-repl-mode-hook
             (lambda ()
               (define-key slime-repl-mode-map (kbd ")")
-                'electric-paren-slime-repl-paren)))
+                #'electric-paren-slime-repl-paren)))
   (add-hook 'sly-mrepl-mode-hook
             (lambda ()
               (define-key sly-mrepl-mode-map (kbd ")")
-                'electric-paren-sly-mrepl-paren)))
+                #'electric-paren-sly-mrepl-paren)))
   (add-hook 'inferior-lisp-mode-hook
                (lambda ()
                  (define-key inferior-lisp-mode-map (kbd ")")
-                   'electric-paren-inferior-lisp-paren)))
+                   #'electric-paren-inferior-lisp-paren)))
   (add-hook 'ielm-mode-hook
             (lambda ()
               (define-key ielm-map (kbd ")")
-                'electric-paren-ielm-paren))))
+                #'electric-paren-ielm-paren))))
 
 (provide 'electric-paren)
+
 ;;; electric-paren.el ends here
