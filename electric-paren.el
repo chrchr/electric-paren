@@ -16,6 +16,24 @@
 
 ;;; Code:
 
+(declare-function sly-mrepl-return "sly")
+
+(declare-function sly-mrepl--mark "sly")
+
+(declare-function sly-input-complete-p "sly")
+
+(declare-function slime-repl-send-input "slime")
+
+(declare-function slime-input-complete-p "slime")
+
+(defvar slime-repl-input-start-mark)
+
+(defvar slime-repl-mode-map)
+
+(defvar sly-mrepl-mode-map)
+
+(defvar inferior-lisp-mode-map)
+
 (defun electric-paren-complete-sexp-p (min max)
   "Determine whether the text between locations MIN and MAX represent a complete Lisp expression."
 
