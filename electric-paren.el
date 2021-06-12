@@ -5,7 +5,6 @@
 ;; Author: Robert Church <chrchr@gmail.com>
 ;; Created: 2019-02-14
 ;; Version: 0.1
-;; Package-Version: 20210612.0
 ;; Package-Requires: ((emacs "24.1"))
 ;; Homepage: https://github.com/chrchr/electric-paren
 
