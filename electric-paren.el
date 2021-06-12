@@ -1,17 +1,19 @@
 ;;; electric-paren.el --- Evaluate lisp expressions when they are complete   -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020-2021 Robert Church
-;; 
+
+;; Author: Robert Church <chrchr@gmail.com>
+;; Created: 2019-02-14
+;; Version: 0.1
+;; Package-Version: 20210612.0
+;; Package-Requires: ((emacs "24.1"))
+;; Homepage: https://github.com/chrchr/electric-paren
+
 ;;; Commentary:
+
 ;; In ielm, eshell, slime repl, and inferior Lisp mode, this package
 ;; causes instant evaluation of complete expressions when a closing
 ;; parenthesis is typed.
-;;
-;; Author: Robert Church <chrchr@gmail.com>
-;; Package-Version: 20210612
-;; Package-Requires: ((emacs "24.1"))
-;; Homepage: https://github.com/chrchr/electric-paren
-;; Created: 2019-02-14
 
 ;;; Code:
 
